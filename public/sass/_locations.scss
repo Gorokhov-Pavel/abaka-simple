@@ -1,24 +1,27 @@
 #input-table tbody td {
-    color: black;
+    color: $black-text;
 }
 #input-table tbody tr:first-child td:first-child {
-    color: blue;
+    color: $nechetnye-stroki;
 }
 #input-table tbody tr:first-child + tr td:first-child {
-    color: green;
+    color: $chetnye-stroki;
 }
 #input-table tbody tr:first-child + tr + tr td:first-child {
-    color: blue;
+    color: $nechetnye-stroki;
 }
 #input-table tbody tr:first-child + tr + tr + tr td:first-child {
-    color: green;
+    color: $chetnye-stroki;
 }
 #input-table tbody tr:first-child + tr + tr + tr + tr td:first-child {
-    color: blue;
+    color: $nechetnye-stroki;
 }
 
+html {
+    font-size: 16px
+}
 table span {
-    font-size: 40pt;
+    font-size: 40px;
 }
 
 .name {
@@ -44,20 +47,7 @@ div h1 {
     text-align: left;
     padding-bottom: 200px;
 }
-/*
-#on-sum-1 {
-    position: absolute;
-    top: 685px;
-    left: 130px;
-   visibility: hidden;
-}
-#on-sum-2 {
-    position: absolute;
-    top: 760px;
-    left: 245px;
-    visibility: hidden;
-}
-*/
+
 .under-thing {
     border: solid;
     background-color: gold;

@@ -1,91 +1,109 @@
 //console.log("hwww");
 let numberOfTeams;
-const teamNumber = document.querySelector("h1").getAttribute("id");
-iframe.onload = function () {
-    
-    let k = 1; // team-1
-    let tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-    while (tempResultsTable !== null) {
+const teamNumber = $("h1").attr("id");
+
+function inCells() {
+    let k = 0;
+    $("iframe").contents().find("table").each(function() {
 	k += 1;
-	tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-    }
-    numberOfTeams = k - 1;
+    });
+    numberOfTeams = k - 1; //одна таблица общая
+    console.log(k);
+    //console.log(numberOfTeams);
     
     for (let i = 1; i <= 5; i++) {
 	for (let j = 1; j <= 5; j++) {
 	    const coordX = j;
 	    const coordY = i;
 	    //console.log("hw2");
-	    //console.log(iframe.contentDocument.getElementById("cell"+coordY+"-"+coordX).innerText);
-	    const resultsCell = iframe.contentDocument.querySelector("#"+teamNumber+" #cell"+coordY+"-"+coordX);
-	    const teamOutputCell = document.querySelector("#output-table #cell"+coordY+"-"+coordX);
-	    //console.log(teamOutputCell);
-	    const teamInputCell = document.querySelector("#input-table #cell"+coordY+"-"+coordX);
+	    const resultsCell = $("iframe").contents().find("#"+teamNumber+" #cell"+coordY+"-"+coordX);
 	    
-	    const resultsCellClass = resultsCell.getAttribute("class");
-	    teamOutputCell.setAttribute("class", resultsCellClass);
-	    //console.log(resultsCell);
-	    //console.log(resultsCell.getAttribute("class"));
-	    teamInputCell.setAttribute("class", resultsCellClass);
+	    const teamOutputCell = $("#output-table #cell"+coordY+"-"+coordX);
+	    const teamInputCell = $("#input-table #cell"+coordY+"-"+coordX);
+	    
+	    const resultsCellClass = resultsCell.attr("class");
+	    teamOutputCell.attr("class", resultsCellClass);
+	    teamInputCell.attr("class", resultsCellClass);
 	    
 	    if (resultsCellClass == "first-try") {
-		teamOutputCell.innerText = "Можно получить " + (coordX*10) + " баллов";
+		teamOutputCell.text("Можно получить " + (coordX*10) + " баллов");
 		//console.log(teamInputCell.innerHTML);
-		teamInputCell.innerHTML = `<form action="/answer/` + coordX + "/" + coordY + `" method="post">
+		teamInputCell.html(`
 		Первая 
     		<br>
 		попытка
 		<br>
-		<input type="text" name="data" size="3">
+		<input type="text" name="lengthNum" size="3">
 		<br>
 		<button type="submit">
 		  Отправить
 		</button>
-	      </form>`
+	      `);
+		teamInputCell.find("button").on("click", function() {
+		    console.log("ans");
+		    $.post("/answer/"+coordY+"/"+coordX, {data: teamInputCell.find("input").val(), coordX: coordX, coordY: coordY, teamsNumber: teamNumber},function(){
+			//teamInputCell.find("input").val("");
+			//alert("Принято!");
+			location=location;
+			return false;});
+		    teamInputCell.find("input").val("");
+		    console.log("ans2");
+		});
 	    }
 	    if (resultsCellClass == "second-try") {
-		teamOutputCell.innerText = "Можно получить " + (coordX*5) + " баллов";
-		teamInputCell.innerHTML = `<form action="/answer/` + coordX + "/" + coordY + `" method="post">
+		teamOutputCell.text("Можно получить " + (coordX*5) + " баллов");
+		teamInputCell.html(`
 		Вторая 
     		<br>
 		попытка
 		<br>
-		<input type="text" name="data" size="3">
+		<input type="text" name="lengthNum" size="3">
 		<br>
 		<button type="submit">
 		  Отправить
 		</button>
-	      </form>`
+	      `);
+		teamInputCell.find("button").on("click", function() {
+		    console.log("ans");
+		    $.post("/answer/"+coordY+"/"+coordX, {data: teamInputCell.find("input").val(), coordX: coordX, coordY: coordY, teamsNumber: teamNumber },function(){
+			//teamInputCell.find("input").val("");
+			//alert("Принято!");
+			location=location;
+			return false;});
+		    teamInputCell.find("input").val("");
+		    console.log("ans2");
+		});
 	    }
 	    if (resultsCellClass == "right-from-first-try") {
-		teamOutputCell.innerHTML = resultsCell.innerHTML;
-		teamInputCell.innerHTML = "Задача <br>решена <br>с первой <br>попытки!"
+		teamOutputCell.html(resultsCell.html());
+		teamInputCell.html("Задача <br>решена <br>с первой <br>попытки!");
 	    }
 	    if (resultsCellClass == "right-from-second-try") {
-		teamOutputCell.innerHTML = resultsCell.innerHTML;
-		teamInputCell.innerHTML = "Задача <br>решена <br>со второй <br>попытки!"
+		teamOutputCell.html(resultsCell.html());
+		teamInputCell.html("Задача <br>решена <br>со второй <br>попытки!");
 	    }
 	    if (resultsCellClass == "fail") {
-		teamOutputCell.innerHTML = resultsCell.innerHTML;
-		teamInputCell.innerHTML = "Попыток <br>нет, <br>задача <br>не решена"
+		teamOutputCell.html(resultsCell.html());
+		teamInputCell.html("Попыток <br>нет, <br>задача <br>не решена");
 	    }
 	}
     }
     for (let i = 1; i <= 5; i++) {
 	const coordX = 6;
 	const coordY = i;
-	const resultsCell = iframe.contentDocument.querySelector("#"+teamNumber+" #cell"+coordY+"-"+coordX);
-	const teamOutputCell = document.querySelector("#output-table #cell"+coordY+"-"+coordX);
 
-	const resultsCellClass = resultsCell.getAttribute("class");
-	teamOutputCell.setAttribute("class", resultsCellClass);
+	const resultsCell = $("iframe").contents().find("#"+teamNumber+" #cell"+coordY+"-"+coordX);
+	const teamOutputCell = $("#output-table #cell"+coordY+"-"+coordX);
+
+	const resultsCellClass = resultsCell.attr("class");
+	teamOutputCell.attr("class", resultsCellClass);
 
 	if (resultsCellClass == "bonus-can") {
 	    let sum = 0;
 	    for (let j = 1; j <= 5; j++) {
-		const tempTeamOutputCell = document.querySelector("#output-table #cell"+coordY+"-"+j);
-		const tempTeamOutputCellClass = tempTeamOutputCell.getAttribute("class");
-		const symbols = tempTeamOutputCell.innerText;
+		const tempTeamOutputCell = $("#output-table #cell"+coordY+"-"+j);
+		const tempTeamOutputCellClass = tempTeamOutputCell.attr("class");
+		const symbols = tempTeamOutputCell.text();
 		if (tempTeamOutputCellClass == "first-try") {
 		    sum += Number(symbols[15])*10 + Number(symbols[16]); //Можно получить 50 баллов 
 		} else if (tempTeamOutputCellClass == "second-try") {
@@ -96,55 +114,56 @@ iframe.onload = function () {
 			//console.log(symbols[15]);
 		    }
 		} else {
-		    if (symbols[1] !== undefined) { //5_ может null?
-			sum += Number(symbols[0])*10 + Number(symbols[1]);
-			//console.log(symbols[1]);
-		    } else {
-			sum += Number(symbols[0]);
-			//console.log(symbols[0]);
-		    }
+		    sum += Number(symbols);
+		    // if (symbols[1] !== undefined) { //5_ может null?
+		    // 	sum += Number(symbols[0])*10 + Number(symbols[1]);
+		    // 	console.log(Number(symbols));
+		    // } else {
+		    // 	sum += Number(symbols[0]);
+		    // 	//console.log(symbols[0]);
+		    // }
 		}
-		//console.log(symbols[16]);
+		//console.log(symbols[0]);
 	    }
 	    let flag = 0;
-	    let k = 1; // team-1
-	    let tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-	    while ((flag == 0) && (tempResultsTable !== null)) {
-		const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell"+coordY+"-"+coordX);
-		if (tempResultsCell.getAttribute("class") == "bonus-have") {
+	    
+	    $("iframe").contents().find("#main-output-table #cell"+coordY+"-"+coordX).each(function() {
+		//console.log(this);
+		if ($(this).attr("class") == "bonus-have") {
 		    flag = 1;
 		}
-		k += 1;
-		tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-	    }
+	    });
+	    //	});
+	    
 	    if (flag == 0) {
-		teamOutputCell.innerText = "Можно получить бонус " + sum + " баллов";
+		teamOutputCell.text("Можно получить бонус " + sum + " баллов");
 	    } else {
-		teamOutputCell.innerText = "Можно получить бонус " + (sum/2) + " баллов";
+		teamOutputCell.text("Можно получить бонус " + (sum/2) + " баллов");
 	    }
 	}
 	if (resultsCellClass == "bonus-have") {
-	    teamOutputCell.innerHTML = resultsCell.innerHTML;
+	    teamOutputCell.html(resultsCell.html());
 	}
 	if (resultsCellClass == "bonus-fail") {
-	    teamOutputCell.innerHTML = resultsCell.innerHTML;
+	    teamOutputCell.html(resultsCell.html());
 	}
     }
     for (let j = 1; j <= 5; j++) {
 	const coordX = j;
 	const coordY = 6;
-	const resultsCell = iframe.contentDocument.querySelector("#"+teamNumber+" #cell"+coordY+"-"+coordX);
-	const teamOutputCell = document.querySelector("#output-table #cell"+coordY+"-"+coordX);
 
-	const resultsCellClass = resultsCell.getAttribute("class");
-	teamOutputCell.setAttribute("class", resultsCellClass);
+	const resultsCell = $("iframe").contents().find("#"+teamNumber+" #cell"+coordY+"-"+coordX);
+	const teamOutputCell = $("#output-table #cell"+coordY+"-"+coordX);
+
+	const resultsCellClass = resultsCell.attr("class");
+	teamOutputCell.attr("class", resultsCellClass);
 
 	if (resultsCellClass == "bonus-can") {
 	    let sum = 0;
 	    for (let i = 1; i <= 5; i++) {
-		const tempTeamOutputCell = document.querySelector("#output-table #cell"+i+"-"+coordX);
-		const tempTeamOutputCellClass = tempTeamOutputCell.getAttribute("class");
-		const symbols = tempTeamOutputCell.innerText;
+		const tempTeamOutputCell = $("#output-table #cell"+i+"-"+coordX);
+		const tempTeamOutputCellClass = tempTeamOutputCell.attr("class");
+		const symbols = tempTeamOutputCell.text();
 		if (tempTeamOutputCellClass == "first-try") {
 		    sum += Number(symbols[15])*10 + Number(symbols[16]); //Можно получить 50 баллов 
 		} else if (tempTeamOutputCellClass == "second-try") {
@@ -155,80 +174,96 @@ iframe.onload = function () {
 			//console.log(symbols[15]);
 		    }
 		} else {
-		    if (symbols[1] !== undefined) { //5_ может null?
-			sum += Number(symbols[0])*10 + Number(symbols[1]);
-			//console.log(symbols[1]);
-		    } else {
-			sum += Number(symbols[0]);
-			//console.log(symbols[0]);
-		    }
+		    sum += Number(symbols);
+		    // if (symbols[1] !== undefined) { //5_ может null?
+		    // 	sum += Number(symbols[0])*10 + Number(symbols[1]);
+		    // 	//console.log(symbols[1]);
+		    // } else {
+		    // 	sum += Number(symbols[0]);
+		    // 	//console.log(symbols[0]);
+		    // }
 		}
 		//console.log(symbols[16]);
 	    }
 	    let flag = 0;
-	    let k = 1; // team-1
-	    let tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-	    while ((flag == 0) && (tempResultsTable !== null)) {
-		const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell"+coordY+"-"+coordX);
-		if (tempResultsCell.getAttribute("class") == "bonus-have") {
+	    $("iframe").contents().find("#main-output-table #cell"+coordY+"-"+coordX).each(function() {
+		//console.log(this);
+		if ($(this).attr("class") == "bonus-have") {
 		    flag = 1;
 		}
-		k += 1;
-		tempResultsTable = iframe.contentDocument.querySelector("#team-" + k);
-	    }
+	    });
 	    if (flag == 0) {
-		teamOutputCell.innerText = "Можно получить бонус " + sum + " баллов";
+		teamOutputCell.text("Можно получить бонус " + sum + " баллов");
 	    } else {
-		teamOutputCell.innerText = "Можно получить бонус " + (sum/2) + " баллов";
+		teamOutputCell.text("Можно получить бонус " + (sum/2) + " баллов");
 	    }
 	}
 	if (resultsCellClass == "bonus-have") {
-	    teamOutputCell.innerHTML = resultsCell.innerHTML;
+	    teamOutputCell.html(resultsCell.html());
 	}
 	if (resultsCellClass == "bonus-fail") {
-	    teamOutputCell.innerHTML = resultsCell.innerHTML;
+	    teamOutputCell.html(resultsCell.html());
 	}
     }
 
     for (let i = 1; i <= 5; i++) {
 	const coordX = 0;
 	const coordY = i;
-	const resultsCell = iframe.contentDocument.querySelector("#team-1 #cell"+coordY+"-"+coordX);
-	const teamOutputCell = document.querySelector("#output-table #cell"+coordY+"-"+coordX);
-	const teamInputCell = document.querySelector("#input-table #cell"+coordY+"-"+coordX);
+	
+	const resultsCell = $("iframe").contents().find("#team-1 #cell"+coordY+"-"+coordX);
+	const teamOutputCell = $("#output-table #cell"+coordY+"-"+coordX);
+	const teamInputCell = $("#input-table #cell"+coordY+"-"+coordX);
 
-	teamOutputCell.innerText = resultsCell.innerText;
-	teamInputCell.innerText = resultsCell.innerText;
+	teamOutputCell.text(resultsCell.text());
+	teamInputCell.text(resultsCell.text());
     }
 
-    const firstSumTeam = document.querySelector(".sum span:first-child");
-    const firstSumResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " .sum span:first-child");
-    firstSumTeam.innerText = firstSumResultsTable.innerText;
+    const firstSumTeam = $(".sum span:first-child");
+    const firstSumResultsTable = $("iframe").contents().find("#" + teamNumber + " .sum span:first-child");
+    firstSumTeam.text(firstSumResultsTable.text());
 
-    const secondSumTeam = document.querySelector(".sum span:first-child + span");
-    const secondSumResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " .sum span:first-child + span");
-    secondSumTeam.innerText = secondSumResultsTable.innerText;
+    const secondSumTeam = $(".sum span:first-child + span");
+    const secondSumResultsTable = $("iframe").contents().find("#" + teamNumber + " .sum span:first-child + span");
+    secondSumTeam.text(secondSumResultsTable.text());
 
-    const thirdSumTeam = document.querySelector(".sum span:first-child + span + span");
-    const thirdSumResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " .sum span:first-child + span + span");
-    thirdSumTeam.innerText = thirdSumResultsTable.innerText;
+    const thirdSumTeam = $(".sum span:first-child + span + span");
+    const thirdSumResultsTable = $("iframe").contents().find("#" + teamNumber + " .sum span:first-child + span + span");
+    thirdSumTeam.text(thirdSumResultsTable.text());
 
-    const shtrafSumTeam = document.querySelector(".sum span:first-child + span + span + span");
-    const shtrafSumResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " .sum span:first-child + span + span + span");
-    shtrafSumTeam.innerText = shtrafSumResultsTable.innerText;
+    const shtrafSumTeam = $(".sum span:first-child + span + span + span");
+    const shtrafSumResultsTable = $("iframe").contents().find("#" + teamNumber + " .sum span:first-child + span + span + span");
+    shtrafSumTeam.text(shtrafSumResultsTable.text());
 
-    const sumTeam = document.querySelector(".sum span:first-child + span + span + span + span");
-    const sumResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " .sum span:first-child + span + span + span + span");
-    sumTeam.innerText = sumResultsTable.innerText;
-};
+    const sumTeam = $(".sum span:first-child + span + span + span + span");
+    const sumResultsTable = $("iframe").contents().find("#" + teamNumber + " .sum span:first-child + span + span + span + span");
+    sumTeam.text(sumResultsTable.text());
+    $("iframe").contents().find("#flag").change(function() {
+	console.log("change");
+    });
+    $("iframe").contents().find("#flag").change(inCells);
+}
 
-document.querySelector(".sum span:first-child").onmouseenter = function() {
-    const onsum = document.querySelector("#on-sum-1");
-    onsum.style.visibility = "visible";
-    onsum.style.position = "fixed";
+iframe.onload = inCells;
+$("iframe").contents().find("#flag").change(inCells);
+
+
+// setInterval(function() {
+//     console.log("loop");
+//     $("iframe").load("/results.html");
+//     inCells();
+// }, 2000);
+
+	    
+
+$("#on-sum-1").hide();
+$(".sum span:first-child").hover(function() {
+    //console.log("hvr");
+    const onsum = $("#on-sum-1");
+    onsum.show();
+    onsum.css("position", "fixed");
     const coords = this.getBoundingClientRect();
-    onsum.style.left = coords.left - 25 + "px";
-    onsum.style.top = coords.top - 100 + "px";
+    onsum.css("left", "" + (coords.left - 25) + "px");
+    onsum.css("top", "" + (coords.top - 100)+ "px");
 
     let mystr = "";
     for (let i = 1; i <= 5; i++) {
@@ -236,390 +271,343 @@ document.querySelector(".sum span:first-child").onmouseenter = function() {
 	    if (j !== 1) {
 		mystr += " + span";
 	    }
-	    const firstCellResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " #cell" + i + "-" + j);
-	    const firstCell = document.querySelector("#on-sum-1 span:first-child" + mystr);
-	    firstCell.innerText = firstCellResultsTable.innerText;
+	    const firstCellResultsTable = $("iframe").contents().find("#" + teamNumber + " #cell" + i + "-" + j);
+	    const firstCell = $("#on-sum-1 span:first-child" + mystr);
+	    firstCell.text(firstCellResultsTable.text());
 	}
 	//console.log(mystr);
 	mystr += " + br + span";
     }
-};
-document.querySelector(".sum span:first-child").onmouseleave = function() {
-    const onsum = document.querySelector("#on-sum-1");
-    onsum.style.visibility = "hidden";
-};
+},
+function() {
+    $("#on-sum-1").hide();
+});
 
-document.querySelector(".sum span:first-child + span").onmouseenter = function() {
-    const onsum = document.querySelector("#on-sum-2");
-    onsum.style.visibility = "visible";
-    onsum.style.position = "fixed";
+$("#on-sum-2").hide();
+$(".sum span:first-child + span").hover(function() {
+    const onsum = $("#on-sum-2");
+    onsum.show();
+    onsum.css("position", "fixed");
     const coords = this.getBoundingClientRect();
-    onsum.style.left = coords.left + 5 + "px";
-    onsum.style.top = coords.top - 100 + "px";
+    onsum.css("left", "" + (coords.left - 25) + "px");
+    onsum.css("top", "" + (coords.top - 100)+ "px");
 
     let mystr = "";
     for (let i = 1; i <= 5; i++) {
-	const firstCellResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " #cell" + i + "-6");
-	const firstCell = document.querySelector("#on-sum-2 span:first-child" + mystr);
-	firstCell.innerText = firstCellResultsTable.innerText;
+	const firstCellResultsTable = $("iframe").contents().find("#" + teamNumber + " #cell" + i + "-6");
+	const firstCell = $("#on-sum-2 span:first-child" + mystr);
+	firstCell.text(firstCellResultsTable.text());
 	//console.log(mystr);
 	mystr += " + br + span";
     }
-};
-document.querySelector(".sum span:first-child + span").onmouseleave = function() {
-    const onsum = document.querySelector("#on-sum-2");
-    onsum.style.visibility = "hidden";
-};
+},
+function() {
+    $("#on-sum-2").hide();
+});
 
-document.querySelector(".sum span:first-child + span + span").onmouseenter = function() {
-    const onsum = document.querySelector("#on-sum-3");
-    onsum.style.visibility = "visible";
-    onsum.style.position = "fixed";
-    const coords = this.getBoundingClientRect();
-    onsum.style.left = coords.left - 25 + "px";
-    onsum.style.top = coords.top - 20 + "px";
+$("#on-sum-3").hide();
+$(".sum span:first-child + span + span").hover(
+    function() {
+	const onsum = $("#on-sum-3");
+	onsum.show();
+	onsum.css("position", "fixed");
+	const coords = this.getBoundingClientRect();
+	onsum.css("left", "" + (coords.left - 25) + "px");
+	onsum.css("top", "" + (coords.top - 20)+ "px");
 
-    let mystr = "";
-    for (let j = 1; j <= 5; j++) {
-	const firstCellResultsTable = iframe.contentDocument.querySelector("#" + teamNumber + " #cell6-" + j);
-	const firstCell = document.querySelector("#on-sum-3 span:first-child" + mystr);
-	firstCell.innerText = firstCellResultsTable.innerText;
-	//console.log(mystr);
-	mystr += " + span";
+	let mystr = "";
+	for (let j = 1; j <= 5; j++) {
+	    const firstCellResultsTable = $("iframe").contents().find("#" + teamNumber + " #cell6-" + j);
+	    const firstCell = $("#on-sum-3 span:first-child" + mystr);
+	    firstCell.text(firstCellResultsTable.text());
+	    //console.log(mystr);
+	    mystr += " + span";
+	}
+    },
+    function() {
+	$("#on-sum-3").hide();
+    });
+
+$(".sum span:first-child + span + span + span").hover(
+    function() {
+	const onsum = $("#on-shtraf");
+	onsum.show();
+	onsum.css("position", "fixed");
+	const coords = this.getBoundingClientRect();
+	onsum.css("left", "" + (coords.left - 25) + "px");
+	onsum.css("top", "" + (coords.top - 20)+ "px");
+	if (Number(this.innerText) === 0) {
+	    onsum.text("Вы пока не оштрафованны");
+	} else {
+	    onsum.text("Вы были оштрафованны"); //причина?
+	}
+    },
+    function() {
+	$("#on-shtraf").hide();
     }
-};
-document.querySelector(".sum span:first-child + span + span").onmouseleave = function() {
-    const onsum = document.querySelector("#on-sum-3");
-    onsum.style.visibility = "hidden";
-};
-
-document.querySelector(".sum span:first-child + span + span + span").onmouseenter = function() {
-    const onsum = document.querySelector("#on-shtraf");
-    onsum.style.visibility = "visible";
-    onsum.style.position = "fixed";
-    const coords = this.getBoundingClientRect();
-    onsum.style.left = coords.left - 25 + "px";
-    onsum.style.top = coords.top - 20 + "px";
-    if (Number(this.innerText) === 0) {
-	onsum.innerText = "Вы пока не оштрафованны";
-    } else {
-	onsum.innerText = "Вы были оштрафованны"; //причина?
-    }
-};
-document.querySelector(".sum span:first-child + span + span + span").onmouseleave = function() {
-    const onsum = document.querySelector("#on-shtraf");
-    onsum.style.visibility = "hidden";
-};
-
-document.querySelector("#output-table #cell2-6").onmouseenter = function() {
-    const underCell = document.querySelector("#under-cell2-6");
-    underCell.style.visibility = "visible";
-    underCell.style.position = "fixed";
-    const coords = this.getBoundingClientRect();
-    underCell.style.left = coords.left + 5 + "px";
-    underCell.style.top = coords.top + 90 + "px";
-    const myclass = this.getAttribute("class");
-    if (myclass === "bonus-fail") {
-	underCell.innerText = "Одна из задач провалена";
-    } else if (myclass === "bonus-have") {
-	underCell.innerText = "Вы заимели бонус";
-    } else if (myclass === "bonus-can") {
-	underCell.innerText = "Вы ещё можете получить бонус";
-    }
-};
-document.querySelector("#output-table #cell2-6").onmouseleave = function() {
-    const underCell = document.querySelector("#under-cell2-6");
-    underCell.style.visibility = "hidden";
-};
-
-
-// function forUnderBonusCells (underCell, coords, myclass) {
-//     underCell.style.visibility = "visible";
-//     underCell.style.position = "fixed";
-    
-//     underCell.style.left = coords.left + 5 + "px";
-//     underCell.style.top = coords.top + 90 + "px";
-
-//     if (myclass === "bonus-fail") {
-// 	underCell.innerText = "Одна из задач для бонуса провалена";
-//     } else if (myclass === "bonus-have") {
-// 	underCell.innerText = "Вы заимели бонус";
-//     } else if (myclass === "bonus-can") {
-// 	underCell.innerText = "Вы ещё можете получить бонус";
-//     }
-// }
-
-// document.querySelector("#output-table #cell3-6").onmouseenter = function() {
-//     const underCell = document.querySelector("#under-cell3-6");
-//     const coords = this.getBoundingClientRect();
-//     const myclass = this.getAttribute("class");
-//     forUnderBonusCells(underCell, coords, myclass);
-// };
-// document.querySelector("#output-table #cell3-6").onmouseleave = function() {
-//     const underCell = document.querySelector("#under-cell3-6");
-//     underCell.style.visibility = "hidden";
-// };
+);
 
 for (let i = 1; i <= 5; i++) {
-    document.querySelector("#output-table #cell" + i + "-6").onmouseenter = function() {
-	const underCell = document.querySelector("#under-cell" + i + "-6");
-	//console.log(underCell);
-	//console.log(i);
-	const coords = this.getBoundingClientRect();
-	const myclass = this.getAttribute("class");
-	
-	underCell.style.visibility = "visible";
-	underCell.style.position = "fixed";
-	
-	underCell.style.left = coords.left + 5 + "px";
-	underCell.style.top = coords.top + 90 + "px";
+    $("#output-table #cell" + i + "-6").hover(
+	function() {
+	    const underCell = $("#under-cell" + i + "-6");
+	    //console.log(underCell);
+	    //console.log(i);
+	    const coords = this.getBoundingClientRect();
+	    const myclass = this.getAttribute("class");
 
-	if (myclass === "bonus-fail") {
-	    underCell.innerText = "Одна из задач для бонуса провалена";
-	} else if (myclass === "bonus-have") {
-	    underCell.innerText = "Вы заимели бонус";
-	} else if (myclass === "bonus-can") {
-	    underCell.innerText = "Вы ещё можете получить бонус";
-	    let found = false;
-	    for (let k = 1; k <= numberOfTeams && found === false; k++) {
-		const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-6");
-		const classTempResultsCell = tempResultsCell.getAttribute("class");
-		if (classTempResultsCell == "bonus-have") {
-		    underCell.innerHTML += "<br/>";
-		    underCell.innerText += "команда " + iframe.contentDocument.querySelector("#team-"+k+" .name").innerText + " уже получила бонус";
-		    found = true;
-		}
-	    }
-	    if (found === false) {
-		underCell.innerHTML += "<br/>";
-		underCell.innerText += "ближайшие к бонусу команды:"
-		underCell.innerHTML += "<br/>";
-		let myobj = {};
-		let classobj = {};
-		let names = [];
+	    underCell.show();
+	    underCell.css("position", "fixed");
+	    
+	    underCell.css("left", "" + (coords.left + 5) + "px");
+	    underCell.css("top", "" + (coords.top + 90)+ "px");
+
+	    if (myclass === "bonus-fail") {
+		underCell.text("Одна из задач для бонуса провалена");
+	    } else if (myclass === "bonus-have") {
+		underCell.text("Вы заимели бонус");
+	    } else if (myclass === "bonus-can") {
+		underCell.text("Вы ещё можете получить бонус");
+		let found = false;
 		for (let k = 1; k <= numberOfTeams && found === false; k++) {
-		    const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-6");
-		    const classTempResultsCell = tempResultsCell.getAttribute("class");
-		    names[k] = iframe.contentDocument.querySelector("#team-"+k+" .name").innerText;
-		    let myarr = [];
-		    let myclasses = [];
-		    for (let j = 1; j <= 5; j++) {
-			myarr[j] = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-"+j).innerText;
-			myclasses[j] = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-"+j).getAttribute("class");
+		    const tempResultsCell = $("iframe").contents().find("#team-"+k + " #cell"+i+"-6");
+		    const classTempResultsCell = tempResultsCell.attr("class");
+		    if (classTempResultsCell == "bonus-have") {
+			underCell.html(underCell.html() + "<br/>" + "команда " + $("iframe").contents().find("#team-"+k+" .name").text() + " уже получила бонус");
+			found = true;
 		    }
-		    myclasses[6] = classTempResultsCell;
-		    //myobj[`${k}`] = myarr;
-		    //classobj[`${k}`] = myclasses;
-		    myobj[k] = myarr;
-		    classobj[k] = myclasses;
 		}
-		let withMaxProblems = [];
-		let maxProblems = 0;
-		for (let k = 1; k <= numberOfTeams; k++) {
-		    if (classobj[k][6] !== "bonus-fail") {
-			let howMuchProblems = 0;
+		if (found === false) {
+		    underCell.html(underCell.html() + "<br/>" + "ближайшие к бонусу команды:" + "<br/>");
+		    let myobj = {};
+		    let classobj = {};
+		    let names = [];
+		    for (let k = 1; k <= numberOfTeams && found === false; k++) {
+			const tempResultsCell = $("iframe").contents().find("#team-"+k + " #cell"+i+"-6");
+			const classTempResultsCell = tempResultsCell.attr("class");
+			names[k] = $("iframe").contents().find("#team-"+k+" .name").text();
+			let myarr = [];
+			let myclasses = [];
 			for (let j = 1; j <= 5; j++) {
-			    if (Number(myobj[k][j]) > 0) {
-				howMuchProblems += 1;
+			    myarr[j] = $("iframe").contents().find("#team-"+k + " #cell"+i+"-"+j).text();
+			    myclasses[j] = $("iframe").contents().find("#team-"+k + " #cell"+i+"-"+j).attr("class");
+			}
+			myclasses[6] = classTempResultsCell;
+			myobj[k] = myarr;
+			classobj[k] = myclasses;
+		    }
+		    let withMaxProblems = [];
+		    let maxProblems = 0;
+		    for (let k = 1; k <= numberOfTeams; k++) {
+			if (classobj[k][6] !== "bonus-fail") {
+			    let howMuchProblems = 0;
+			    for (let j = 1; j <= 5; j++) {
+				if (Number(myobj[k][j]) > 0) {
+				    howMuchProblems += 1;
+				}
+			    }
+			    if (howMuchProblems > maxProblems) {
+				maxProblems = howMuchProblems;
+				withMaxProblems = [];
+				withMaxProblems.push(k);
+			    } else if (howMuchProblems === maxProblems) {
+				withMaxProblems.push(k);
 			    }
 			}
-			if (howMuchProblems > maxProblems) {
-			    maxProblems = howMuchProblems;
-			    withMaxProblems = [];
-			    withMaxProblems.push(k);
-			} else if (howMuchProblems === maxProblems) {
-			    withMaxProblems.push(k);
-			}
 		    }
-		}
-		const points = [undefined, 10, 20, 30, 40, 50];
-		let minPoints = 100500; //заведомо больше всех.
-		for (let m = 0; m < withMaxProblems.length; m++) {
-		    let teamMaxPoints = 0;
-		    for (let j = 1; j <= 5; j++) {
-			if (Number(myobj[withMaxProblems[m]][j]) > 0) {
-			    teamMaxPoints += points[j];
-			}
-		    }
-		    if (teamMaxPoints < minPoints) {
-			minPoints = teamMaxPoints;
-		    }
-		}
-		let printingTeams = [];
-		for (let k = 1; k <= numberOfTeams; k++) {
-		    if (classobj[k][6] !== "bonus-fail") {
+		    const points = [undefined, 10, 20, 30, 40, 50];
+		    let minPoints = 100500; //заведомо больше всех.
+		    for (let m = 0; m < withMaxProblems.length; m++) {
 			let teamMaxPoints = 0;
 			for (let j = 1; j <= 5; j++) {
-			    if (Number(myobj[k][j]) > 0) {
+			    if (Number(myobj[withMaxProblems[m]][j]) > 0) {
 				teamMaxPoints += points[j];
 			    }
 			}
-			if (teamMaxPoints >= minPoints) {
-			    printingTeams.push(k)
+			if (teamMaxPoints < minPoints) {
+			    minPoints = teamMaxPoints;
 			}
 		    }
-		}
-		for (let m2 = 0; m2 < printingTeams.length; m2++) {
-		    underCell.innerText += names[printingTeams[m2]];
-		    underCell.innerHTML += "<br/>";
-		    underCell.innerText += myobj[printingTeams[m2]].join("+");
-		    underCell.innerHTML += "<br/>";
+		    let printingTeams = [];
+		    for (let k = 1; k <= numberOfTeams; k++) {
+			if (classobj[k][6] !== "bonus-fail") {
+			    let teamMaxPoints = 0;
+			    for (let j = 1; j <= 5; j++) {
+				if (Number(myobj[k][j]) > 0) {
+				    teamMaxPoints += points[j];
+				}
+			    }
+			    if (teamMaxPoints >= minPoints) {
+				printingTeams.push(k)
+			    }
+			}
+		    }
+		    for (let m2 = 0; m2 < printingTeams.length; m2++) {
+			underCell.html(underCell.html() + names[printingTeams[m2]]);
+			underCell.html(underCell.html() + "<br/>" + myobj[printingTeams[m2]].join("+") + "<br/>");
+		    }
 		}
 	    }
+	},
+	function() {
+	    $("#under-cell"+i+"-6").hide();
 	}
-    };
-    document.querySelector("#output-table #cell"+i+"-6").onmouseleave = function() {
-	const underCell = document.querySelector("#under-cell"+i+"-6");
-	underCell.style.visibility = "hidden";
-    };
+    );
 }
 for (let j = 1; j <= 5; j++) {
-    document.querySelector("#output-table #cell6-" + j).onmouseenter = function() {
-	const underCell = document.querySelector("#under-cell6-" + j);
-	//console.log(underCell);
-	//console.log(j);
-	const coords = this.getBoundingClientRect();
-	const myclass = this.getAttribute("class");
+    $("#output-table #cell6-" + j).hover(
+	function() {
+	    const underCell = $("#under-cell6-" + j);
+	    //console.log(underCell);
+	    //console.log(j);
+	    const coords = this.getBoundingClientRect();
+	    const myclass = this.getAttribute("class");
 
-	underCell.style.visibility = "visible";
-	underCell.style.position = "fixed";
-	
-	underCell.style.left = coords.left + 5 + "px";
-	underCell.style.top = coords.top + 90 + "px";
+	    underCell.show();
+	    underCell.css("position", "fixed");
+	    
+	    underCell.css("left", "" + (coords.left + 5) + "px");
+	    underCell.css("top", "" + (coords.top + 90)+ "px");
 
-	if (myclass === "bonus-fail") {
-	    underCell.innerText = "Одна из задач для бонуса провалена";
-	} else if (myclass === "bonus-have") {
-	    underCell.innerText = "Вы заимели бонус";
-	} else if (myclass === "bonus-can") {
-	    underCell.innerText = "Вы ещё можете получить бонус";
-	    let found = false;
-	    for (let k = 1; k <= numberOfTeams && found === false; k++) {
-		const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell6-"+j);
-		const classTempResultsCell = tempResultsCell.getAttribute("class");
-		if (classTempResultsCell == "bonus-have") {
-		    underCell.innerHTML += "<br/>";
-		    underCell.innerText += "команда " + iframe.contentDocument.querySelector("#team-"+k+" .name").innerText + " уже получила бонус";
-		    found = true;
-		}
-	    }
-	    if (found === false) {
-		underCell.innerHTML += "<br/>";
-		underCell.innerText += "ближайшие к бонусу команды:"
-		underCell.innerHTML += "<br/>";
-		let myobj = {};
-		let classobj = {};
-		let names = [];
+	    if (myclass === "bonus-fail") {
+		underCell.text("Одна из задач для бонуса провалена");
+	    } else if (myclass === "bonus-have") {
+		underCell.text("Вы заимели бонус");
+	    } else if (myclass === "bonus-can") {
+		underCell.text("Вы ещё можете получить бонус");
+		let found = false;
 		for (let k = 1; k <= numberOfTeams && found === false; k++) {
 		    const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell6-"+j);
 		    const classTempResultsCell = tempResultsCell.getAttribute("class");
-		    names[k] = iframe.contentDocument.querySelector("#team-"+k+" .name").innerText;
-		    let myarr = [];
-		    let myclasses = [];
-		    for (let i = 1; i <= 5; i++) {
-			myarr[i] = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-"+j).innerText;
-			myclasses[i] = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-"+j).getAttribute("class");
+		    if (classTempResultsCell == "bonus-have") {
+			underCell.html(underCell.html() + "<br/>" + "команда " + $("iframe").contents().find("#team-"+k+" .name").text() + " уже получила бонус");
+			found = true;
 		    }
-		    myclasses[6] = classTempResultsCell;
-		    //myobj[`${k}`] = myarr;
-		    //classobj[`${k}`] = myclasses;
-		    myobj[k] = myarr;
-		    classobj[k] = myclasses;
 		}
-		let withMaxProblems = [];
-		let maxProblems = 0;
-		for (let k = 1; k <= numberOfTeams; k++) {
-		    if (classobj[k][6] !== "bonus-fail") {
-			let howMuchProblems = 0;
+		if (found === false) {
+		    underCell.html(underCell.html() + "<br/>" + "ближайшие к бонусу команды:" + "<br/>");
+		    let myobj = {};
+		    let classobj = {};
+		    let names = [];
+		    for (let k = 1; k <= numberOfTeams && found === false; k++) {
+			const tempResultsCell = $("iframe").contents().find("#team-"+k + " #cell6-"+j);
+			const classTempResultsCell = tempResultsCell.attr("class");
+			names[k] = $("iframe").contents().find("#team-"+k+" .name").text();
+			let myarr = [];
+			let myclasses = [];
 			for (let i = 1; i <= 5; i++) {
-			    if (Number(myobj[k][i]) > 0) {
-				howMuchProblems += 1;
+			    myarr[i] = $("iframe").contents().find("#team-"+k + " #cell"+i+"-"+j).text();
+			    myclasses[i] = $("iframe").contents().find("#team-"+k + " #cell"+i+"-"+j).attr("class");
+			}
+			myclasses[6] = classTempResultsCell;
+			myobj[k] = myarr;
+			classobj[k] = myclasses;
+		    }
+		    let withMaxProblems = [];
+		    let maxProblems = 0;
+		    for (let k = 1; k <= numberOfTeams; k++) {
+			if (classobj[k][6] !== "bonus-fail") {
+			    let howMuchProblems = 0;
+			    for (let i = 1; i <= 5; i++) {
+				if (Number(myobj[k][i]) > 0) {
+				    howMuchProblems += 1;
+				}
+			    }
+			    if (howMuchProblems > maxProblems) {
+				maxProblems = howMuchProblems;
+				withMaxProblems = [];
+				withMaxProblems.push(k);
+			    } else if (howMuchProblems === maxProblems) {
+				withMaxProblems.push(k);
 			    }
 			}
-			if (howMuchProblems > maxProblems) {
-			    maxProblems = howMuchProblems;
-			    withMaxProblems = [];
-			    withMaxProblems.push(k);
-			} else if (howMuchProblems === maxProblems) {
-			    withMaxProblems.push(k);
-			}
+		    }
+		    for (let m = 0; m < withMaxProblems.length; m++) {
+			underCell.html(underCell.html() + names[withMaxProblems[m]] + "<br/>" + myobj[withMaxProblems[m]].join("+") + "<br/>");
 		    }
 		}
-		for (let m = 0; m < withMaxProblems.length; m++) {
-		    underCell.innerText += names[withMaxProblems[m]];
-		    underCell.innerHTML += "<br/>";
-		    underCell.innerText += myobj[withMaxProblems[m]].join("+");
-		    underCell.innerHTML += "<br/>";
-		}
 	    }
+	},
+	function() {
+	    $("#under-cell6-"+j).hide();
 	}
-    };
-    document.querySelector("#output-table #cell6-"+j).onmouseleave = function() {
-	const underCell = document.querySelector("#under-cell6-"+j);
-	underCell.style.visibility = "hidden";
-    };
+    );
 }
 for (let i = 1; i <= 5; i++) {
     for (let j = 1; j <= 5; j++) {
 	//const coordX = j;
 	//const coordY = i;
-	document.querySelector("#output-table #cell" + i + "-" + j).onmouseenter = function() {
-	    const underCell = document.querySelector("#under-cell"+i+"-" + j);
-	    //console.log(underCell);
-	    const coords = this.getBoundingClientRect();
-	    //const myclass = this.getAttribute("class");
+	$("#output-table #cell" + i + "-" + j).hover(
+	    function() {
+		const underCell = $("#under-cell"+i+"-" + j);
+		//console.log(underCell);
+		const coords = this.getBoundingClientRect();
 
-	    underCell.style.visibility = "visible";
-	    underCell.style.position = "fixed";
+		underCell.show();
+		underCell.css("position", "fixed");
 	    
-	    underCell.style.left = coords.left + 5 + "px";
-	    underCell.style.top = coords.top + 90 + "px";
+		underCell.css("left", "" + (coords.left + 5) + "px");
+		underCell.css("top", "" + (coords.top + 90)+ "px");
 
-	    let reshili = [];
-	    let tryed = [];
-	    let nottryed = [];
-	    let failed = [];
-	    for (let k = 1; k <= numberOfTeams; k++) {
-		const tempResultsCell = iframe.contentDocument.querySelector("#team-"+k + " #cell"+i+"-"+j);
-		const classTempResultsCell = tempResultsCell.getAttribute("class");
-		if (classTempResultsCell == "fail") {
-		    failed.push(iframe.contentDocument.querySelector("#team-"+k+" .name").innerText);
-		} else if (classTempResultsCell == "first-try") {
-		    nottryed.push(iframe.contentDocument.querySelector("#team-"+k+" .name").innerText);
-		} else if (classTempResultsCell == "second-try") {
-		    tryed.push(iframe.contentDocument.querySelector("#team-"+k+" .name").innerText);
-		} else {
-		    reshili.push(iframe.contentDocument.querySelector("#team-"+k+" .name").innerText);
+		let reshili = [];
+		let tryed = [];
+		let nottryed = [];
+		let failed = [];
+		for (let k = 1; k <= numberOfTeams; k++) {
+		    const tempResultsCell = $("iframe").contents().find("#team-"+k + " #cell"+i+"-"+j);
+		    const classTempResultsCell = tempResultsCell.attr("class");
+		    if (classTempResultsCell == "fail") {
+			failed.push($("iframe").contents().find("#team-"+k+" .name").text());
+		    } else if (classTempResultsCell == "first-try") {
+			nottryed.push($("iframe").contents().find("#team-"+k+" .name").text());
+		    } else if (classTempResultsCell == "second-try") {
+			tryed.push($("iframe").contents().find("#team-"+k+" .name").text());
+		    } else {
+			reshili.push($("iframe").contents().find("#team-"+k+" .name").text());
+		    }
 		}
+		underCell.text("решившие команды:");
+		underCell.html(underCell.html() + "<br/>");
+		reshili.forEach((elem) => {
+		    underCell.html(underCell.html() + elem + "<br/>");
+		})
+		underCell.html(underCell.html() + "пытавшиеся сдать:" + "<br/>");
+		tryed.forEach((elem) => {
+		    underCell.html(underCell.html() + elem + "<br/>");
+		})
+		underCell.html(underCell.html() + "не решившие:" + "<br/>");
+		nottryed.forEach((elem) => {
+		    underCell.html(underCell.html() + elem + "<br/>");
+		})
+		underCell.html(underCell.html() + "провалившие эту задачу:" + "<br/>");
+		failed.forEach((elem) => {
+		    underCell.html(underCell.html() + elem + "<br/>");
+		})
+	    },
+	    function() {
+		$("#under-cell"+i+"-"+j).hide();
 	    }
-	    underCell.innerText = "решившие команды:";
-	    underCell.innerHTML += "<br/>";
-	    reshili.forEach((elem) => {
-		underCell.innerText += elem;
-		underCell.innerHTML += "<br/>";
-	    })
-	    underCell.innerText += "пытавшиеся сдать:";
-	    underCell.innerHTML += "<br/>";
-	    tryed.forEach((elem) => {
-		underCell.innerText += elem;
-		underCell.innerHTML += "<br/>";
-	    })
-	    underCell.innerText += "не решившие:";
-	    underCell.innerHTML += "<br/>";
-	    nottryed.forEach((elem) => {
-		underCell.innerText += elem;
-		underCell.innerHTML += "<br/>";
-	    })
-	    underCell.innerText += "провалившие эту задачу:";
-	    underCell.innerHTML += "<br/>";
-	    failed.forEach((elem) => {
-		underCell.innerText += elem;
-		underCell.innerHTML += "<br/>";
-	    })
-	};
-	document.querySelector("#output-table #cell"+i+"-"+j).onmouseleave = function() {
-	    const underCell = document.querySelector("#under-cell"+i+"-"+j);
-	    underCell.style.visibility = "hidden";
-	};
+	);
     }
 }
+
+// $("#input-table #cell4-1").click(function() {
+//     console.log("ans");
+//     $.post("/answer/4-1", {data: $("#input-table #cell4-1 input").val() });
+//     console.log("ans2");
+//     console.log($("#input-table #cell4-1 input").val());
+// });
+// $("#input-table #cell5-1").click(function() {
+//     console.log("ans");
+//     $.post("/answer", null,function(){return false;});
+//     console.log("ans");
+// });
+// $("#input-table #cell5-3 button").each(function(){console.log("btn");});
+// $(document).on("click", "#input-table #cell5-3 button", function() {
+//     console.log("ans");
+//     $.post("/answer/5-3", null,function(){return false;});
+//     console.log("ans2");
+// });
+
+
+

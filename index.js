@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
-//var longpoll = require("express-longpoll")(app);
 //const fs = require('fs');
 
 const articles = [{title: 'example' }];
@@ -62,8 +61,6 @@ app.set('port', process.env.port || 3000);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-//longpoll.create("/poll");
 
 app.use(
     '/index.html',
@@ -138,11 +135,10 @@ app.get('/results.html', (req, res) => {
     //res.type('text/html');
     res.render('result.ejs', { teams: teams });
 });
-// app.get('/team-2.html', (req, res) => {
-//     //res.type('text/html');
-//     res.render('team-2.ejs');
-// });
 
+app.post('/answer/', (req, res, next) => {
+    console.log('answer:');
+});
 app.post('/answer/:coordX/:coordY', (req, res, next) => {
     const coordX = req.params.coordX;
     const coordY = req.params.coordY;
@@ -183,20 +179,8 @@ app.post('/answer/:coordX/:coordY', (req, res, next) => {
     //res.render("/team-2.html");
     //express.static("public" + mypath);
     //res.render('team-2.ejs');
-    //res.send("Принято.");
-    res.redirect(303, mypath);
-});
-app.post('/answer/', (req, res, next) => {
-    console.log('answer:');
-    console.log(req.body);
-    
-    const myurl = new URL(req.headers.referer);
-    const mypath = myurl.pathname;
-    console.log(mypath);
-    const teamNumber = mypath[6];
-    //res.render("/team-2.html");
-    //express.static("public" + mypath);
     res.send("Принято.");
+    //res.redirect(303, mypath);
 });
 
 // Пользовательская страница 404

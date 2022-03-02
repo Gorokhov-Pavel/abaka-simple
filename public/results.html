@@ -3,11 +3,19 @@
   <head>
     <meta charset="utf-8">
     <title>Abaka</title>
-    <link href="styles/style.css" rel="stylesheet" type="text/css">
-    <link href="styles/locations-in-results.css" rel="stylesheet" type="text/css">
+    <link href="styles/results-styles.css" rel="stylesheet" type="text/css">
+    <script src="/scripts-end/jquery-1.12.4.min.js"></script>
+    <script src="scripts-end/for-results.js"></script>
   </head>
   <body>
 
+     <div id="flag-div">
+      <select id="flag">
+	<option id="flag-true" value="true" selected="selected">true</option>
+	<option id="flag-false" value="false">false</option>
+      </select>
+    </div>
+    
     <div id="log">
       <p> Команда №2 сдала задачу №3 в теме Тема №2 </p>
       <p> Комманда №1 совершает неудачную попытку сдачи задачи №5 в теме Тема №1 </p>
@@ -24,7 +32,10 @@
 	      Место
 	    </td>
 	    <td class="name">
-	      Название комманды
+	      Название команды
+	    </td>
+	    <td class="school">
+	      Школа
 	    </td>
 	    <td class="sum">
 	      Сумма очков
@@ -34,11 +45,12 @@
       </table>
     </div>
     
-    <div id="team-1">
+    <div id="team-1" class="teams-div">
       <h1 class="name"> Команда №1 </h1>
+      <h1 class="school"> Школа №1 </h1>
       <h1 class="sum"> Сумма: <span>0</span> + <span>0</span> + <span>0</span> - <span>0</span> = <span>0</span>
       </h1>
-      <table id="output-table"> 
+      <table id="main-output-table"> 
 	<colgroup span="1">
 	  <col span="1">
 	</colgroup>
@@ -127,11 +139,12 @@
 
     </div>
 
-    <div id="team-2">
+    <div id="team-2" class="teams-div">
       <h1 class="name"> Команда №2 </h1>
+      <h1 class="school"> Школа №1 </h1>
       <h1 class="sum"> Сумма: <span>0</span> + <span>0</span> + <span>0</span> - <span>0</span> = <span>0</span>
       </h1>
-      <table id="output-table"> 
+      <table id="main-output-table"> 
 	<colgroup span="1">
 	  <col span="1">
 	</colgroup>
@@ -220,11 +233,12 @@
       
     </div>
 
-<div id="team-3">
+    <div id="team-3" class="teams-div">
       <h1 class="name"> Команда №3 </h1>
+      <h1 class="school"> Школа №1 </h1>
       <h1 class="sum"> Сумма: <span>0</span> + <span>0</span> + <span>0</span> - <span>0</span> = <span>0</span>
       </h1>
-      <table id="output-table"> 
+      <table id="main-output-table"> 
 	<colgroup span="1">
 	  <col span="1">
 	</colgroup>
@@ -313,6 +327,6 @@
 
     </div>
     
-    <script src="scripts/for-results.optional.js"></script>
+    
   </body>
 </html>
