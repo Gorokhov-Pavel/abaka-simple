@@ -27,64 +27,18 @@ function inCells() {
 	    
 	    if (resultsCellClass == "first-try") {
 		teamOutputCell.text("Можно получить " + (coordX*10) + " баллов");
-		//console.log(teamInputCell.innerHTML);
-		teamInputCell.html(`
-		Первая 
-    		<br>
-		попытка
-		<br>
-		<input type="text" name="lengthNum" size="3">
-		<br>
-		<button type="submit">
-		  Отправить
-		</button>
-	      `);
-		teamInputCell.find("button").on("click", function() {
-		    console.log("ans");
-		    $.post("/answer/"+coordY+"/"+coordX, {data: teamInputCell.find("input").val(), coordX: coordX, coordY: coordY, teamsNumber: teamNumber},function(){
-			//teamInputCell.find("input").val("");
-			//alert("Принято!");
-			location=location;
-			return false;});
-		    teamInputCell.find("input").val("");
-		    console.log("ans2");
-		});
 	    }
 	    if (resultsCellClass == "second-try") {
 		teamOutputCell.text("Можно получить " + (coordX*5) + " баллов");
-		teamInputCell.html(`
-		Вторая 
-    		<br>
-		попытка
-		<br>
-		<input type="text" name="lengthNum" size="3">
-		<br>
-		<button type="submit">
-		  Отправить
-		</button>
-	      `);
-		teamInputCell.find("button").on("click", function() {
-		    console.log("ans");
-		    $.post("/answer/"+coordY+"/"+coordX, {data: teamInputCell.find("input").val(), coordX: coordX, coordY: coordY, teamsNumber: teamNumber },function(){
-			//teamInputCell.find("input").val("");
-			//alert("Принято!");
-			location=location;
-			return false;});
-		    teamInputCell.find("input").val("");
-		    console.log("ans2");
-		});
 	    }
 	    if (resultsCellClass == "right-from-first-try") {
 		teamOutputCell.html(resultsCell.html());
-		teamInputCell.html("Задача <br>решена <br>с первой <br>попытки!");
 	    }
 	    if (resultsCellClass == "right-from-second-try") {
 		teamOutputCell.html(resultsCell.html());
-		teamInputCell.html("Задача <br>решена <br>со второй <br>попытки!");
 	    }
 	    if (resultsCellClass == "fail") {
 		teamOutputCell.html(resultsCell.html());
-		teamInputCell.html("Попыток <br>нет, <br>задача <br>не решена");
 	    }
 	}
     }
@@ -609,5 +563,91 @@ for (let i = 1; i <= 5; i++) {
 //     console.log("ans2");
 // });
 
+let selectedCell = {};
 
+function clearingSelectedCell() {
+    const oldStyle = { "border-style": "dotted",
+		       "border-bottom-color": selectedCell.borderBottomColor,
+		       "border-left-color": selectedCell.borderLeftColor,
+		       "border-top-color": selectedCell.borderTopColor,
+		       "border-right-color": selectedCell.borderRightColor };
+		       
+    $("#output-table #cell" + selectedCell.coordY + "-" + selectedCell.coordX).css(oldStyle);
+}
+		 
+for (let i = 1; i <= 5; i++) {
+    for (let j = 1; j <= 5; j++) {
+	const coordX = j;
+	const coordY = i;
+	$(document).on("click", "#output-table #cell" + i + "-" + j, function() {
+	    console.log("click");
+	    if (selectedCell != {}) {
+		clearingSelectedCell();
+	    }
+	    selectedCell.coordX = j;
+	    selectedCell.coordY = i;
+	    selectedCell.borderBottomColor = $("#output-table #cell" + i + "-" + j).css("border-bottom-color");
+	    selectedCell.borderLeftColor = $("#output-table #cell" + i + "-" + j).css("border-left-color");
+	    selectedCell.borderTopColor = $("#output-table #cell" + i + "-" + j).css("border-top-color");
+	    selectedCell.borderRightColor = $("#output-table #cell" + i + "-" + j).css("border-right-color");
+	    const newStyle = { "border-style": "double",
+			       //"border-width": "5px",
+			       "border-color": "black" };
+	    $("#output-table #cell" + i + "-" + j).css(newStyle);
 
+	    const cellsClass = $("#output-table #cell" + i + "-" + j).attr("class");
+	    const rightCol = $("#right-column");
+	    if (cellsClass == "first-try" || cellsClass == "second-try") {
+		rightCol.html(`
+                <div>
+		Выбрана задача №`
+	        + $("#output-table #cell" + 0 + "-" + coordX).text()
+		+ ` по теме ` 
+                + $("#output-table #cell" + coordY + "-" + 0).text()
+		+ `<br/><br/>`
+		+ ((cellsClass == "first-try") ? "Первая" : "Вторая") + `
+    		<br>
+		попытка
+		<br>
+		<input type="text" name="lengthNum" size="10">
+		<br>
+		<button type="submit">
+		  Отправить
+		</button>
+                </div>
+	      `);
+		rightCol.find("button").on("click", function() {
+		    console.log("ans");
+		    $.post("/answer/"+coordY+"/"+coordX, {data: rightCol.find("input").val(), coordX: coordX, coordY: coordY, teamsNumber: teamNumber},function(){
+			//teamInputCell.find("input").val("");
+			//alert("Принято!");
+			location=location;
+			return false;});
+		    rightCol.find("input").val("");
+		    console.log("ans2");
+		});
+	    //} else {
+	//	const rightCol = $("#right-column");
+	//	rightCol.html("");
+	    } else if (cellsClass == "right-from-first-try") {
+		rightCol.html(`<div>Выбрана задача №`
+	        + $("#output-table #cell" + 0 + "-" + coordX).text()
+		+ ` по теме ` 
+                + $("#output-table #cell" + coordY + "-" + 0).text()
+		+ `<br/><br/>Задача <br>решена <br>с первой <br>попытки!</div>`);
+	    } else if (cellsClass == "right-from-second-try") {
+		rightCol.html(`<div>Выбрана задача №`
+	        + $("#output-table #cell" + 0 + "-" + coordX).text()
+		+ ` по теме ` 
+                + $("#output-table #cell" + coordY + "-" + 0).text()
+		+ `<br/><br/>Задача <br>решена <br>со второй <br>попытки!</div>`);
+	    } else if (cellsClass == "fail") {
+		rightCol.html(`<div>Выбрана задача №`
+	        + $("#output-table #cell" + 0 + "-" + coordX).text()
+		+ ` по теме ` 
+                + $("#output-table #cell" + coordY + "-" + 0).text()
+		+ `<br/><br/>Попыток <br>нет, <br>задача <br>не решена</div>`);
+	    }
+	});
+    }
+}

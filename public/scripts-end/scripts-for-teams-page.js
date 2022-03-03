@@ -14,7 +14,7 @@ function inCells() {
   console.log(k); //console.log(numberOfTeams);
 
   for (var i = 1; i <= 5; i++) {
-    var _loop = function _loop(j) {
+    for (var j = 1; j <= 5; j++) {
       var coordX = j;
       var coordY = i; //console.log("hw2");
 
@@ -26,82 +26,44 @@ function inCells() {
       teamInputCell.attr("class", resultsCellClass);
 
       if (resultsCellClass == "first-try") {
-        teamOutputCell.text("Можно получить " + coordX * 10 + " баллов"); //console.log(teamInputCell.innerHTML);
-
-        teamInputCell.html("\n\t\t\u041F\u0435\u0440\u0432\u0430\u044F \n    \t\t<br>\n\t\t\u043F\u043E\u043F\u044B\u0442\u043A\u0430\n\t\t<br>\n\t\t<input type=\"text\" name=\"lengthNum\" size=\"3\">\n\t\t<br>\n\t\t<button type=\"submit\">\n\t\t  \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C\n\t\t</button>\n\t      ");
-        teamInputCell.find("button").on("click", function () {
-          console.log("ans");
-          $.post("/answer/" + coordY + "/" + coordX, {
-            data: teamInputCell.find("input").val(),
-            coordX: coordX,
-            coordY: coordY,
-            teamsNumber: teamNumber
-          }, function () {
-            //teamInputCell.find("input").val("");
-            //alert("Принято!");
-            location = location;
-            return false;
-          });
-          teamInputCell.find("input").val("");
-          console.log("ans2");
-        });
+        teamOutputCell.text("Можно получить " + coordX * 10 + " баллов");
       }
 
       if (resultsCellClass == "second-try") {
         teamOutputCell.text("Можно получить " + coordX * 5 + " баллов");
-        teamInputCell.html("\n\t\t\u0412\u0442\u043E\u0440\u0430\u044F \n    \t\t<br>\n\t\t\u043F\u043E\u043F\u044B\u0442\u043A\u0430\n\t\t<br>\n\t\t<input type=\"text\" name=\"lengthNum\" size=\"3\">\n\t\t<br>\n\t\t<button type=\"submit\">\n\t\t  \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C\n\t\t</button>\n\t      ");
-        teamInputCell.find("button").on("click", function () {
-          console.log("ans");
-          $.post("/answer/" + coordY + "/" + coordX, {
-            data: teamInputCell.find("input").val(),
-            coordX: coordX,
-            coordY: coordY,
-            teamsNumber: teamNumber
-          }, function () {
-            //teamInputCell.find("input").val("");
-            //alert("Принято!");
-            location = location;
-            return false;
-          });
-          teamInputCell.find("input").val("");
-          console.log("ans2");
-        });
       }
 
       if (resultsCellClass == "right-from-first-try") {
         teamOutputCell.html(resultsCell.html());
-        teamInputCell.html("Задача <br>решена <br>с первой <br>попытки!");
       }
 
       if (resultsCellClass == "right-from-second-try") {
         teamOutputCell.html(resultsCell.html());
-        teamInputCell.html("Задача <br>решена <br>со второй <br>попытки!");
       }
 
       if (resultsCellClass == "fail") {
         teamOutputCell.html(resultsCell.html());
-        teamInputCell.html("Попыток <br>нет, <br>задача <br>не решена");
       }
-    };
-
-    for (var j = 1; j <= 5; j++) {
-      _loop(j);
     }
   }
 
   for (var _i = 1; _i <= 5; _i++) {
-    var coordX = 6;
-    var coordY = _i;
-    var resultsCell = $("iframe").contents().find("#" + teamNumber + " #cell" + coordY + "-" + coordX);
-    var teamOutputCell = $("#output-table #cell" + coordY + "-" + coordX);
-    var resultsCellClass = resultsCell.attr("class");
-    teamOutputCell.attr("class", resultsCellClass);
+    var _coordX = 6;
+    var _coordY = _i;
 
-    if (resultsCellClass == "bonus-can") {
+    var _resultsCell = $("iframe").contents().find("#" + teamNumber + " #cell" + _coordY + "-" + _coordX);
+
+    var _teamOutputCell = $("#output-table #cell" + _coordY + "-" + _coordX);
+
+    var _resultsCellClass = _resultsCell.attr("class");
+
+    _teamOutputCell.attr("class", _resultsCellClass);
+
+    if (_resultsCellClass == "bonus-can") {
       var sum = 0;
 
       for (var _j = 1; _j <= 5; _j++) {
-        var tempTeamOutputCell = $("#output-table #cell" + coordY + "-" + _j);
+        var tempTeamOutputCell = $("#output-table #cell" + _coordY + "-" + _j);
         var tempTeamOutputCellClass = tempTeamOutputCell.attr("class");
         var symbols = tempTeamOutputCell.text();
 
@@ -127,7 +89,7 @@ function inCells() {
       }
 
       var flag = 0;
-      $("iframe").contents().find("#main-output-table #cell" + coordY + "-" + coordX).each(function () {
+      $("iframe").contents().find("#main-output-table #cell" + _coordY + "-" + _coordX).each(function () {
         //console.log(this);
         if ($(this).attr("class") == "bonus-have") {
           flag = 1;
@@ -135,38 +97,38 @@ function inCells() {
       }); //	});
 
       if (flag == 0) {
-        teamOutputCell.text("Можно получить бонус " + sum + " баллов");
+        _teamOutputCell.text("Можно получить бонус " + sum + " баллов");
       } else {
-        teamOutputCell.text("Можно получить бонус " + sum / 2 + " баллов");
+        _teamOutputCell.text("Можно получить бонус " + sum / 2 + " баллов");
       }
     }
 
-    if (resultsCellClass == "bonus-have") {
-      teamOutputCell.html(resultsCell.html());
+    if (_resultsCellClass == "bonus-have") {
+      _teamOutputCell.html(_resultsCell.html());
     }
 
-    if (resultsCellClass == "bonus-fail") {
-      teamOutputCell.html(resultsCell.html());
+    if (_resultsCellClass == "bonus-fail") {
+      _teamOutputCell.html(_resultsCell.html());
     }
   }
 
   for (var _j2 = 1; _j2 <= 5; _j2++) {
-    var _coordX = _j2;
-    var _coordY = 6;
+    var _coordX2 = _j2;
+    var _coordY2 = 6;
 
-    var _resultsCell = $("iframe").contents().find("#" + teamNumber + " #cell" + _coordY + "-" + _coordX);
+    var _resultsCell2 = $("iframe").contents().find("#" + teamNumber + " #cell" + _coordY2 + "-" + _coordX2);
 
-    var _teamOutputCell = $("#output-table #cell" + _coordY + "-" + _coordX);
+    var _teamOutputCell2 = $("#output-table #cell" + _coordY2 + "-" + _coordX2);
 
-    var _resultsCellClass = _resultsCell.attr("class");
+    var _resultsCellClass2 = _resultsCell2.attr("class");
 
-    _teamOutputCell.attr("class", _resultsCellClass);
+    _teamOutputCell2.attr("class", _resultsCellClass2);
 
-    if (_resultsCellClass == "bonus-can") {
+    if (_resultsCellClass2 == "bonus-can") {
       var _sum = 0;
 
       for (var _i2 = 1; _i2 <= 5; _i2++) {
-        var _tempTeamOutputCell = $("#output-table #cell" + _i2 + "-" + _coordX);
+        var _tempTeamOutputCell = $("#output-table #cell" + _i2 + "-" + _coordX2);
 
         var _tempTeamOutputCellClass = _tempTeamOutputCell.attr("class");
 
@@ -194,7 +156,7 @@ function inCells() {
       }
 
       var _flag = 0;
-      $("iframe").contents().find("#main-output-table #cell" + _coordY + "-" + _coordX).each(function () {
+      $("iframe").contents().find("#main-output-table #cell" + _coordY2 + "-" + _coordX2).each(function () {
         //console.log(this);
         if ($(this).attr("class") == "bonus-have") {
           _flag = 1;
@@ -202,34 +164,34 @@ function inCells() {
       });
 
       if (_flag == 0) {
-        _teamOutputCell.text("Можно получить бонус " + _sum + " баллов");
+        _teamOutputCell2.text("Можно получить бонус " + _sum + " баллов");
       } else {
-        _teamOutputCell.text("Можно получить бонус " + _sum / 2 + " баллов");
+        _teamOutputCell2.text("Можно получить бонус " + _sum / 2 + " баллов");
       }
     }
 
-    if (_resultsCellClass == "bonus-have") {
-      _teamOutputCell.html(_resultsCell.html());
+    if (_resultsCellClass2 == "bonus-have") {
+      _teamOutputCell2.html(_resultsCell2.html());
     }
 
-    if (_resultsCellClass == "bonus-fail") {
-      _teamOutputCell.html(_resultsCell.html());
+    if (_resultsCellClass2 == "bonus-fail") {
+      _teamOutputCell2.html(_resultsCell2.html());
     }
   }
 
   for (var _i3 = 1; _i3 <= 5; _i3++) {
-    var _coordX2 = 0;
-    var _coordY2 = _i3;
+    var _coordX3 = 0;
+    var _coordY3 = _i3;
 
-    var _resultsCell2 = $("iframe").contents().find("#team-1 #cell" + _coordY2 + "-" + _coordX2);
+    var _resultsCell3 = $("iframe").contents().find("#team-1 #cell" + _coordY3 + "-" + _coordX3);
 
-    var _teamOutputCell2 = $("#output-table #cell" + _coordY2 + "-" + _coordX2);
+    var _teamOutputCell3 = $("#output-table #cell" + _coordY3 + "-" + _coordX3);
 
-    var teamInputCell = $("#input-table #cell" + _coordY2 + "-" + _coordX2);
+    var _teamInputCell = $("#input-table #cell" + _coordY3 + "-" + _coordX3);
 
-    _teamOutputCell2.text(_resultsCell2.text());
+    _teamOutputCell3.text(_resultsCell3.text());
 
-    teamInputCell.text(_resultsCell2.text());
+    _teamInputCell.text(_resultsCell3.text());
   }
 
   var firstSumTeam = $(".sum span:first-child");
@@ -345,7 +307,7 @@ $(".sum span:first-child + span + span + span").hover(function () {
   $("#on-shtraf").hide();
 });
 
-var _loop2 = function _loop2(i) {
+var _loop = function _loop(i) {
   $("#output-table #cell" + i + "-6").hover(function () {
     var underCell = $("#under-cell" + i + "-6"); //console.log(underCell);
     //console.log(i);
@@ -470,10 +432,10 @@ var _loop2 = function _loop2(i) {
 };
 
 for (var i = 1; i <= 5; i++) {
-  _loop2(i);
+  _loop(i);
 }
 
-var _loop3 = function _loop3(j) {
+var _loop2 = function _loop2(j) {
   $("#output-table #cell6-" + j).hover(function () {
     var underCell = $("#under-cell6-" + j); //console.log(underCell);
     //console.log(j);
@@ -518,9 +480,9 @@ var _loop3 = function _loop3(j) {
           var myarr = [];
           var myclasses = [];
 
-          for (var _i5 = 1; _i5 <= 5; _i5++) {
-            myarr[_i5] = $("iframe").contents().find("#team-" + _k4 + " #cell" + _i5 + "-" + j).text();
-            myclasses[_i5] = $("iframe").contents().find("#team-" + _k4 + " #cell" + _i5 + "-" + j).attr("class");
+          for (var _i6 = 1; _i6 <= 5; _i6++) {
+            myarr[_i6] = $("iframe").contents().find("#team-" + _k4 + " #cell" + _i6 + "-" + j).text();
+            myclasses[_i6] = $("iframe").contents().find("#team-" + _k4 + " #cell" + _i6 + "-" + j).attr("class");
           }
 
           myclasses[6] = _classTempResultsCell2;
@@ -535,8 +497,8 @@ var _loop3 = function _loop3(j) {
           if (classobj[_k5][6] !== "bonus-fail") {
             var howMuchProblems = 0;
 
-            for (var _i6 = 1; _i6 <= 5; _i6++) {
-              if (Number(myobj[_k5][_i6]) > 0) {
+            for (var _i7 = 1; _i7 <= 5; _i7++) {
+              if (Number(myobj[_k5][_i7]) > 0) {
                 howMuchProblems += 1;
               }
             }
@@ -562,10 +524,10 @@ var _loop3 = function _loop3(j) {
 };
 
 for (var j = 1; j <= 5; j++) {
-  _loop3(j);
+  _loop2(j);
 }
 
-var _loop4 = function _loop4(_i4) {
+var _loop3 = function _loop3(_i4) {
   var _loop5 = function _loop5(_j7) {
     //const coordX = j;
     //const coordY = i;
@@ -625,7 +587,7 @@ var _loop4 = function _loop4(_i4) {
 };
 
 for (var _i4 = 1; _i4 <= 5; _i4++) {
-  _loop4(_i4);
+  _loop3(_i4);
 } // $("#input-table #cell4-1").click(function() {
 //     console.log("ans");
 //     $.post("/answer/4-1", {data: $("#input-table #cell4-1 input").val() });
@@ -643,3 +605,82 @@ for (var _i4 = 1; _i4 <= 5; _i4++) {
 //     $.post("/answer/5-3", null,function(){return false;});
 //     console.log("ans2");
 // });
+
+
+var selectedCell = {};
+
+function clearingSelectedCell() {
+  var oldStyle = {
+    "border-style": "dotted",
+    "border-bottom-color": selectedCell.borderBottomColor,
+    "border-left-color": selectedCell.borderLeftColor,
+    "border-top-color": selectedCell.borderTopColor,
+    "border-right-color": selectedCell.borderRightColor
+  };
+  $("#output-table #cell" + selectedCell.coordY + "-" + selectedCell.coordX).css(oldStyle);
+}
+
+var _loop4 = function _loop4(_i5) {
+  var _loop6 = function _loop6(_j8) {
+    var coordX = _j8;
+    var coordY = _i5;
+    $(document).on("click", "#output-table #cell" + _i5 + "-" + _j8, function () {
+      console.log("click");
+
+      if (selectedCell != {}) {
+        clearingSelectedCell();
+      }
+
+      selectedCell.coordX = _j8;
+      selectedCell.coordY = _i5;
+      selectedCell.borderBottomColor = $("#output-table #cell" + _i5 + "-" + _j8).css("border-bottom-color");
+      selectedCell.borderLeftColor = $("#output-table #cell" + _i5 + "-" + _j8).css("border-left-color");
+      selectedCell.borderTopColor = $("#output-table #cell" + _i5 + "-" + _j8).css("border-top-color");
+      selectedCell.borderRightColor = $("#output-table #cell" + _i5 + "-" + _j8).css("border-right-color");
+      var newStyle = {
+        "border-style": "double",
+        //"border-width": "5px",
+        "border-color": "black"
+      };
+      $("#output-table #cell" + _i5 + "-" + _j8).css(newStyle);
+      var cellsClass = $("#output-table #cell" + _i5 + "-" + _j8).attr("class");
+      var rightCol = $("#right-column");
+
+      if (cellsClass == "first-try" || cellsClass == "second-try") {
+        rightCol.html("\n                <div>\n\t\t\u0412\u044B\u0431\u0440\u0430\u043D\u0430 \u0437\u0430\u0434\u0430\u0447\u0430 \u2116" + $("#output-table #cell" + 0 + "-" + coordX).text() + " \u043F\u043E \u0442\u0435\u043C\u0435 " + $("#output-table #cell" + coordY + "-" + 0).text() + "<br/><br/>" + (cellsClass == "first-try" ? "Первая" : "Вторая") + "\n    \t\t<br>\n\t\t\u043F\u043E\u043F\u044B\u0442\u043A\u0430\n\t\t<br>\n\t\t<input type=\"text\" name=\"lengthNum\" size=\"10\">\n\t\t<br>\n\t\t<button type=\"submit\">\n\t\t  \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C\n\t\t</button>\n                </div>\n\t      ");
+        rightCol.find("button").on("click", function () {
+          console.log("ans");
+          $.post("/answer/" + coordY + "/" + coordX, {
+            data: rightCol.find("input").val(),
+            coordX: coordX,
+            coordY: coordY,
+            teamsNumber: teamNumber
+          }, function () {
+            //teamInputCell.find("input").val("");
+            //alert("Принято!");
+            location = location;
+            return false;
+          });
+          rightCol.find("input").val("");
+          console.log("ans2");
+        }); //} else {
+        //	const rightCol = $("#right-column");
+        //	rightCol.html("");
+      } else if (cellsClass == "right-from-first-try") {
+        rightCol.html("<div>\u0412\u044B\u0431\u0440\u0430\u043D\u0430 \u0437\u0430\u0434\u0430\u0447\u0430 \u2116" + $("#output-table #cell" + 0 + "-" + coordX).text() + " \u043F\u043E \u0442\u0435\u043C\u0435 " + $("#output-table #cell" + coordY + "-" + 0).text() + "<br/><br/>\u0417\u0430\u0434\u0430\u0447\u0430 <br>\u0440\u0435\u0448\u0435\u043D\u0430 <br>\u0441 \u043F\u0435\u0440\u0432\u043E\u0439 <br>\u043F\u043E\u043F\u044B\u0442\u043A\u0438!</div>");
+      } else if (cellsClass == "right-from-second-try") {
+        rightCol.html("<div>\u0412\u044B\u0431\u0440\u0430\u043D\u0430 \u0437\u0430\u0434\u0430\u0447\u0430 \u2116" + $("#output-table #cell" + 0 + "-" + coordX).text() + " \u043F\u043E \u0442\u0435\u043C\u0435 " + $("#output-table #cell" + coordY + "-" + 0).text() + "<br/><br/>\u0417\u0430\u0434\u0430\u0447\u0430 <br>\u0440\u0435\u0448\u0435\u043D\u0430 <br>\u0441\u043E \u0432\u0442\u043E\u0440\u043E\u0439 <br>\u043F\u043E\u043F\u044B\u0442\u043A\u0438!</div>");
+      } else if (cellsClass == "fail") {
+        rightCol.html("<div>\u0412\u044B\u0431\u0440\u0430\u043D\u0430 \u0437\u0430\u0434\u0430\u0447\u0430 \u2116" + $("#output-table #cell" + 0 + "-" + coordX).text() + " \u043F\u043E \u0442\u0435\u043C\u0435 " + $("#output-table #cell" + coordY + "-" + 0).text() + "<br/><br/>\u041F\u043E\u043F\u044B\u0442\u043E\u043A <br>\u043D\u0435\u0442, <br>\u0437\u0430\u0434\u0430\u0447\u0430 <br>\u043D\u0435 \u0440\u0435\u0448\u0435\u043D\u0430</div>");
+      }
+    });
+  };
+
+  for (var _j8 = 1; _j8 <= 5; _j8++) {
+    _loop6(_j8);
+  }
+};
+
+for (var _i5 = 1; _i5 <= 5; _i5++) {
+  _loop4(_i5);
+}

@@ -139,7 +139,7 @@ app.get('/results.html', (req, res) => {
 app.post('/answer/', (req, res, next) => {
     console.log('answer:');
 });
-app.post('/answer/:coordX/:coordY', (req, res, next) => {
+app.post('/answer/:coordY/:coordX', (req, res, next) => {
     const coordX = req.params.coordX;
     const coordY = req.params.coordY;
     console.log('answer: coordX='+coordX+" coordY="+coordY);

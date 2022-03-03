@@ -320,4 +320,23 @@ div h1 {
   z-index: 1;
 }
 
+#right-column {
+  position: absolute;
+  top: 100px;
+  left: 750px;
+  width: 600px;
+  height: 600px;
+}
+#right-column div {
+  position: relative;
+  top: 30%;
+  text-align: center;
+}
+#right-column div input {
+  width: 300px;
+  height: 30px;
+  font-size: 24px;
+  text-align: center;
+}
+
 /*# sourceMappingURL=teams-pages-styles.css.map */
